@@ -1,6 +1,7 @@
 import { Observable } from 'rx';
 import { createAction } from 'redux-actions';
 import types from './types';
+import noop from 'lodash/noop';
 
 const throwIfUndefined = () => {
   throw new TypeError('Argument must not be of  type `undefined`');
@@ -92,7 +93,7 @@ export const updateUserEmail = createAction(
 // updateUserLang(username: String, lang: String) => Action
 export const updateUserLang = createAction(
   types.updateUserLang,
-  (username, lang) => ({ username, lang })
+  (username, lang) => ({ username, languageTag: lang })
 );
 
 // updateUserChallenge(
@@ -146,3 +147,6 @@ export const toggleNightMode = createAction(
 export const updateTheme = createAction(types.updateTheme);
 // addThemeToBody(theme: /night|default/) => Action
 export const addThemeToBody = createAction(types.addThemeToBody);
+
+export const openDropdown = createAction(types.openDropdown, noop);
+export const closeDropdown = createAction(types.closeDropdown, noop);

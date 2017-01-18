@@ -10,6 +10,7 @@ import {
   Navbar,
   NavbarBrand
 } from 'react-bootstrap';
+import noop from 'lodash/noop';
 
 import navLinks from './links.json';
 import AvatarPointsNavItem from './Avatar-Points-Nav-Item.jsx';
@@ -31,14 +32,17 @@ function handleNavLinkEvent(content) {
 }
 
 const propTypes = {
-  points: PropTypes.number,
+  closeDropdown: PropTypes.func.isRequired,
+  isNavDropdownOpen: PropTypes.bool,
+  loadCurrentChallenge: PropTypes.func.isRequired,
+  openDropdown: PropTypes.func.isRequired,
   picture: PropTypes.string,
-  signedIn: PropTypes.bool,
-  username: PropTypes.string,
-  updateNavHeight: PropTypes.func,
+  points: PropTypes.number,
   showLoading: PropTypes.bool,
+  signedIn: PropTypes.bool,
   trackEvent: PropTypes.func.isRequired,
-  loadCurrentChallenge: PropTypes.func.isRequired
+  updateNavHeight: PropTypes.func,
+  username: PropTypes.string
 };
 
 export default class FCCNav extends React.Component {
@@ -80,12 +84,26 @@ export default class FCCNav extends React.Component {
 
   renderLink(isNavItem, { isReact, isDropdown, content, link, links, target }) {
     const Component = isNavItem ? NavItem : MenuItem;
+    const {
+      isNavDropdownOpen,
+      openDropdown,
+      closeDropdown
+    } = this.props;
+
     if (isDropdown) {
+      // adding a noop to NavDropdown to disable false warning
+      // about controlled component
       return (
         <NavDropdown
           id={ `nav-${content}-dropdown` }
           key={ content }
           noCaret={ true }
+          onClick={ openDropdown }
+          onClose={ closeDropdown }
+          onMouseEnter={ openDropdown }
+          onMouseLeave={ closeDropdown }
+          onToggle={ noop }
+          open={ isNavDropdownOpen }
           title={ content }
           >
           { links.map(this.renderLink.bind(this, false)) }
@@ -150,17 +168,6 @@ export default class FCCNav extends React.Component {
       picture,
       showLoading
     } = this.props;
-    let navLinksCache;
-
-    if (this._navLinksCache) {
-      navLinksCache = this._navLinksCache;
-    } else {
-      // we cache the rendered static links on the instance
-      // these do not change for the lifetime of the app
-      navLinksCache = this._navLinksCache = navLinks.map(
-        this.renderLink.bind(this, true)
-      );
-    }
 
     return (
       <Navbar
@@ -188,7 +195,11 @@ export default class FCCNav extends React.Component {
             navbar={ true }
             pullRight={ true }
             >
-            { navLinksCache }
+            {
+              navLinks.map(
+                this.renderLink.bind(this, true)
+              )
+            }
             { this.renderSignIn(username, points, picture, showLoading) }
           </Nav>
         </Navbar.Collapse>
@@ -197,5 +208,5 @@ export default class FCCNav extends React.Component {
   }
 }
 
-FCCNav.displayName = 'Nav';
+FCCNav.displayName = 'FCCNav';
 FCCNav.propTypes = propTypes;

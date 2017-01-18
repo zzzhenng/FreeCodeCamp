@@ -2,7 +2,7 @@ import { handleActions } from 'redux-actions';
 import types from './types';
 
 const initialState = {
-  title: 'Learn To Code | Free Code Camp',
+  title: 'Learn To Code | freeCodeCamp',
   isSignInAttempted: false,
   user: '',
   lang: '',
@@ -16,7 +16,7 @@ export default handleActions(
   {
     [types.updateTitle]: (state, { payload = 'Learn To Code' }) => ({
       ...state,
-      title: payload + ' | Free Code Camp'
+      title: payload + ' | freeCodeCamp'
     }),
 
     [types.updateThisUser]: (state, { payload: user }) => ({
@@ -52,6 +52,14 @@ export default handleActions(
     [types.delayedRedirect]: (state, { payload }) => ({
       ...state,
       delayedRedirect: payload
+    }),
+    [types.openDropdown]: state => ({
+      ...state,
+      isNavDropdownOpen: true
+    }),
+    [types.closeDropdown]: state => ({
+      ...state,
+      isNavDropdownOpen: false
     })
   },
   initialState
